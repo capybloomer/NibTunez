@@ -7,3 +7,12 @@ At this time, you can upload a song, [plug in a free last.fm API key](https://ww
 
 You can run this offline by just downloading the HTML file, no need for a webserver - just a modern browser.
 
+# Demo
+You see a demo of the front end by clicking the link below.  It is hosted on GitHub Pages.
+
+https://capybloomer.github.io/NibTunez/
+
+![image](https://github.com/user-attachments/assets/5d8f97f2-bb5f-4922-87a0-d5d35f130f7d)
+
+
+
