@@ -1,5 +1,5 @@
 # NibTunez
-NibTunez is an Open Source Playlists and Music Discovery using the last.fm API.  
+NibTunez is an Open Source Playlists and Music Discovery Web Application using the last.fm API.  
 
 ![image](https://github.com/user-attachments/assets/5d8f97f2-bb5f-4922-87a0-d5d35f130f7d)
 
