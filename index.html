@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NibTunez</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #4287f5;
+            margin-bottom: 5px;
+        }
+        
+        .player-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .playlist-container {
+            width: 30%;
+            background-color: #181818;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .player-container {
+            width: 36%;
+            background-color: #181818;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .recommendations-container {
+            width: 30%;
+            background-color: #181818;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-height: 500px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .recommendations-header {
+            color: #4287f5;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .api-key-container {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+        }
+        
+        .api-key-button {
+            background-color: #4287f5;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .api-key-button:hover {
+            background-color: #5a9cff;
+        }
+        
+        .api-key-input {
+            display: none;
+            margin-top: 10px;
+        }
+        
+        .api-key-input input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #282828;
+            color: #e0e0e0;
+            margin-bottom: 8px;
+        }
+        
+        .api-key-input button {
+            background-color: #4287f5;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 12px;
+        }
+        
+        .api-key-input button:hover {
+            background-color: #5a9cff;
+        }
+        
+        .api-key-status {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        .playlist-item, .recommendation-item {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .playlist-item:hover, .recommendation-item:hover {
+            background-color: #282828;
+        }
+        
+        .playlist-item.active, .recommendation-item.active {
+            background-color: #333;
+            color: #4287f5;
+        }
+        
+        .album-art {
+            width: 200px;
+            height: 200px;
+            background-color: #333;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background-image: url('/api/placeholder/400/400');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .song-info {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .song-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .song-artist {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            background-color: transparent;
+            border: none;
+            color: #e0e0e0;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            transition: color 0.3s;
+        }
+        
+        .btn:hover {
+            color: #1DB954;
+        }
+        
+        .btn.large {
+            font-size: 32px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background-color: #333;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #4287f5;
+            border-radius: 3px;
+            width: 0%;
+        }
+        
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        
+        .action-btn {
+            background-color: #4287f5;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .action-btn:hover {
+            background-color: #5a9cff;
+        }
+        
+        .action-btn:disabled {
+            background-color: #333;
+            cursor: not-allowed;
+        }
+        
+        .volume-container {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .volume-slider {
+            width: 100px;
+            margin: 0 10px;
+        }
+        
+        audio {
+            display: none;
+        }
+        
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1DB954;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+    .footer {
+        text-align: center;
+        margin-top: 30px;
+        padding: 20px 0;
+        border-top: 1px solid #333;
+    }
+
+    .footer-logo {
+        max-width: 120px;
+        margin-bottom: 15px;
+    }
+
+    .footer-text {
+        color: #e6e6e6; 
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .action-buttons {
+        margin-bottom: 40px;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NibTunez</h1>
+            <p>Open Source Playlists and Music Discovery</p>
+        </div>
+        
+        <div class="player-wrapper">
+            <div class="playlist-container">
+                <h3 class="playlist-header">Your Music</h3>
+                <div id="playlist"></div>
+            </div>
+            
+            <div class="player-container">
+                <div class="album-art" id="albumArt"></div>
+                <div class="song-info">
+                    <div class="song-title" id="songTitle">Select a song</div>
+                    <div class="song-artist" id="songArtist"></div>
+                </div>
+                
+                <audio id="audioPlayer"></audio>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="time-info">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn" id="prevBtn">⏮</button>
+                    <button class="btn large" id="playBtn">▶</button>
+                    <button class="btn" id="nextBtn">⏭</button>
+                </div>
+                
+                <div class="volume-container">
+                    <span>🔉</span>
+                    <input type="range" min="0" max="1" step="0.01" value="0.7" class="volume-slider" id="volumeSlider">
+                    <span>🔊</span>
+                </div>
+            </div>
+            
+            <div class="recommendations-container">
+                <h3 class="recommendations-header">Recommended Tracks</h3>
+                <div id="recommendations"></div>
+                <div class="api-key-container">
+                    <button id="apiKeyButton" class="api-key-button">Add Last.fm API Key</button>
+                    <div id="apiKeyInput" class="api-key-input">
+                        <input type="text" id="apiKeyField" placeholder="Enter your Last.fm API key">
+                        <div>
+                            <button id="saveApiKey">Save</button>
+                            <button id="cancelApiKey">Cancel</button>
+                        </div>
+                    </div>
+                    <div id="apiKeyStatus" class="api-key-status"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn" id="selectFilesBtn">Select Music Files</button>
+            <button class="action-btn" id="generatePlaylistBtn">Generate Playlist</button>
+            <button class="action-btn" id="downloadPlaylistBtn" disabled>Download playlist</button>
+        </div>
+        
+        <div class="footer">
+            <img src="the_nibbler.png" alt="The Nibbler Cat" class="footer-logo">
+            <div class="footer-text">Created with ❤ by <a href="https://capybloominteractive.com">CapyBloom Interactive</a><br>
+                <a href="https://buymeacoffee.com/capybloominteractive">Buy me a Coffee ☕</a>
+
+            </div>
+        </div>
+    
+        <input type="file" id="fileInput" accept="audio/*" multiple style="display: none;">
+    </div>
+    
+    <script>
+        if (window.musicPlayer) {
+            delete window.musicPlayer;
+        }
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    <script>
+        class MusicPlayer {
+            constructor() {
+                this.audioPlayer = document.getElementById('audioPlayer');
+                this.playBtn = document.getElementById('playBtn');
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.progressBar = document.getElementById('progressBar');
+                this.progressContainer = document.getElementById('progressContainer');
+                this.currentTimeEl = document.getElementById('currentTime');
+                this.totalTimeEl = document.getElementById('totalTime');
+                this.volumeSlider = document.getElementById('volumeSlider');
+                this.songTitle = document.getElementById('songTitle');
+                this.songArtist = document.getElementById('songArtist');
+                this.albumArt = document.getElementById('albumArt');
+                this.playlistContainer = document.getElementById('playlist');
+                this.recommendationsContainer = document.getElementById('recommendations');
+                this.generatePlaylistBtn = document.getElementById('generatePlaylistBtn');
+                this.downloadPlaylistBtn = document.getElementById('downloadPlaylistBtn');
+                this.selectFilesBtn = document.getElementById('selectFilesBtn');
+                this.fileInput = document.getElementById('fileInput');
+                this.apiKeyButton = document.getElementById('apiKeyButton');
+                this.apiKeyInput = document.getElementById('apiKeyInput');
+                this.apiKeyField = document.getElementById('apiKeyField');
+                this.saveApiKeyBtn = document.getElementById('saveApiKey');
+                this.cancelApiKeyBtn = document.getElementById('cancelApiKey');
+                this.apiKeyStatus = document.getElementById('apiKeyStatus');
+                
+                this.musicFiles = [];
+                this.recommendedTracks = [];
+                this.currentTrackIndex = 0;
+                this.isPlaying = false;
+                this.lastfmApiKey = this.getStoredApiKey();
+                this.usingLastFmData = false;
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                
+                this.playlistContainer.innerHTML = '<p style="text-align: center; padding: 20px;">Click "Select Music Files" to add songs to your playlist</p>';
+                
+                this.updateApiKeyStatus();
+            }
+            
+            getStoredApiKey() {
+                return localStorage.getItem('lastfmApiKey') || '';
+            }
+            
+            saveApiKey(key) {
+                localStorage.setItem('lastfmApiKey', key);
+                this.lastfmApiKey = key;
+                this.updateApiKeyStatus();
+            }
+            
+            updateApiKeyStatus() {
+                if (this.lastfmApiKey) {
+                    this.apiKeyStatus.textContent = 'API Key: ✓ Saved';
+                    this.apiKeyStatus.style.color = '#4287f5';
+                    this.apiKeyButton.textContent = 'Change Last.fm API Key';
+                } else {
+                    this.apiKeyStatus.textContent = 'No API key saved';
+                    this.apiKeyStatus.style.color = '#aaa';
+                    this.apiKeyButton.textContent = 'Add Last.fm API Key';
+                }
+            }
+            
+            async loadMusicFiles(files) {
+                try {
+                    if (!files || files.length === 0) return;
+                    
+                    this.musicFiles = [];
+                    
+                    for (const file of files) {
+                        if (!file.type.startsWith('audio/')) continue;
+                        
+                        const path = URL.createObjectURL(file);
+                        
+                        const newTrack = {
+                            name: file.name.replace(/\.[^/.]+$/, ""),
+                            artist: 'Unknown Artist',
+                            album: 'Unknown Album',
+                            path: path,
+                            file: file,
+                            duration: 0
+                        };
+                        
+                        this.musicFiles.push(newTrack);
+                        
+                        const audio = new Audio();
+                        audio.src = path;
+                        
+                        const trackIndex = this.musicFiles.length - 1;
+                        
+                        audio.addEventListener('loadedmetadata', () => {
+                            this.musicFiles[trackIndex].duration = audio.duration;
+                            this.renderPlaylist();
+                        });
+                        
+                        this.extractMetadata(file, trackIndex);
+                    }
+                    
+                    this.renderPlaylist();
+                    
+                    this.playlistContainer.innerHTML = '<p style="text-align: center; padding: 10px;">Music loaded successfully!</p>';
+                    setTimeout(() => this.renderPlaylist(), 1000);
+                    
+                } catch (error) {
+                    console.error('Error loading music files:', error);
+                    this.playlistContainer.innerHTML = `<p style="text-align: center; padding: 20px; color: red;">Error loading files: ${error.message}</p>`;
+                }
+            }
+            
+            extractMetadata(file, trackIndex) {
+                window.jsmediatags.read(file, {
+                    onSuccess: (tag) => {
+                        const tags = tag.tags;
+                        
+                        if (tags.title) {
+                            this.musicFiles[trackIndex].name = tags.title;
+                        }
+                        
+                        if (tags.artist) {
+                            this.musicFiles[trackIndex].artist = tags.artist;
+                        }
+                        
+                        if (tags.album) {
+                            this.musicFiles[trackIndex].album = tags.album;
+                        }
+                        
+                        if (tags.picture) {
+                            const picture = tags.picture;
+                            let base64String = "";
+                            
+                            for (let i = 0; i < picture.data.length; i++) {
+                                base64String += String.fromCharCode(picture.data[i]);
+                            }
+                            
+                            const imageUri = "data:" + picture.format + ";base64," + window.btoa(base64String);
+                            this.musicFiles[trackIndex].albumArt = imageUri;
+                        }
+                        
+                        this.renderPlaylist();
+                    },
+                    onError: (error) => {
+                        console.log('Error reading tags:', error.type, error.info);
+                    }
+                });
+            }
+            
+            renderPlaylist() {
+                this.playlistContainer.innerHTML = '';
+                
+                this.musicFiles.forEach((track, index) => {
+                    const trackElement = document.createElement('div');
+                    trackElement.classList.add('playlist-item');
+                    
+                    const titleSpan = document.createElement('div');
+                    titleSpan.classList.add('playlist-title');
+                    titleSpan.textContent = track.name;
+                    titleSpan.style.fontWeight = 'bold';
+                    
+                    const artistSpan = document.createElement('div');
+                    artistSpan.classList.add('playlist-artist');
+                    artistSpan.textContent = track.artist;
+                    artistSpan.style.fontSize = '0.8em';
+                    artistSpan.style.color = '#aaa';
+                    
+                    const albumSpan = document.createElement('div');
+                    albumSpan.classList.add('playlist-album');
+                    albumSpan.textContent = track.album;
+                    albumSpan.style.fontSize = '0.8em';
+                    albumSpan.style.color = '#888';
+                    
+                    if (track.albumArt) {
+                        const artThumbnail = document.createElement('div');
+                        artThumbnail.classList.add('playlist-thumbnail');
+                        artThumbnail.style.width = '30px';
+                        artThumbnail.style.height = '30px';
+                        artThumbnail.style.backgroundImage = `url(${track.albumArt})`;
+                        artThumbnail.style.backgroundSize = 'cover';
+                        artThumbnail.style.backgroundPosition = 'center';
+                        artThumbnail.style.marginRight = '10px';
+                        artThumbnail.style.borderRadius = '4px';
+                        artThumbnail.style.float = 'left';
+                        
+                        trackElement.appendChild(artThumbnail);
+                    }
+                    
+                    const infoContainer = document.createElement('div');
+                    infoContainer.style.overflow = 'hidden'; 
+                    
+                    infoContainer.appendChild(titleSpan);
+                    infoContainer.appendChild(artistSpan);
+                    infoContainer.appendChild(albumSpan);
+                    
+                    trackElement.appendChild(infoContainer);
+                    
+                    trackElement.addEventListener('click', () => {
+                        this.playTrack(index);
+                    });
+                    
+                    this.playlistContainer.appendChild(trackElement);
+                });
+            }
+            
+            renderRecommendations() {
+                const recommendationsDiv = document.getElementById('recommendations');
+                recommendationsDiv.innerHTML = '';
+                
+                if (this.recommendedTracks.length === 0) {
+                    const noTracksElement = document.createElement('p');
+                    noTracksElement.textContent = 'No recommendations found.';
+                    noTracksElement.style.textAlign = 'center';
+                    noTracksElement.style.color = '#aaa';
+                    recommendationsDiv.appendChild(noTracksElement);
+                    return;
+                }
+                
+                this.recommendedTracks.forEach((track, index) => {
+                    const trackElement = document.createElement('div');
+                    trackElement.classList.add('recommendation-item');
+                    
+                    const titleSpan = document.createElement('div');
+                    titleSpan.classList.add('recommendation-title');
+                    titleSpan.textContent = track.name;
+                    titleSpan.style.fontWeight = 'bold';
+                    
+                    const artistSpan = document.createElement('div');
+                    artistSpan.classList.add('recommendation-artist');
+                    artistSpan.textContent = track.artist;
+                    artistSpan.style.fontSize = '0.8em';
+                    artistSpan.style.color = '#aaa';
+                    
+                    trackElement.appendChild(titleSpan);
+                    trackElement.appendChild(artistSpan);
+                    
+                    if (this.usingLastFmData) {
+                        const sourceSpan = document.createElement('div');
+                        sourceSpan.classList.add('recommendation-source');
+                        sourceSpan.textContent = 'via Last.fm';
+                        sourceSpan.style.fontSize = '0.7em';
+                        sourceSpan.style.color = '#666';
+                        sourceSpan.style.fontStyle = 'italic';
+                        sourceSpan.style.marginTop = '3px';
+                        
+                        trackElement.appendChild(sourceSpan);
+                    }
+                    
+                    recommendationsDiv.appendChild(trackElement);
+                });
+                
+                this.downloadPlaylistBtn.disabled = this.recommendedTracks.length === 0;
+            }
+            
+            playTrack(index) {
+                if (!this.musicFiles.length || index >= this.musicFiles.length) return;
+                
+                this.currentTrackIndex = index;
+                const track = this.musicFiles[index];
+                
+                this.audioPlayer.src = track.path;
+                
+                this.songTitle.textContent = track.name;
+                this.songArtist.textContent = track.artist;
+                
+                if (track.albumArt) {
+                    this.albumArt.style.backgroundImage = `url(${track.albumArt})`;
+                } else {
+                    this.albumArt.style.backgroundImage = `url('/api/placeholder/400/400')`;
+                }
+                
+                const playlistItems = document.querySelectorAll('.playlist-item');
+                playlistItems.forEach((item, i) => {
+                    if (i === index) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                this.audioPlayer.play().catch(error => {
+                    console.error('Error playing track:', error);
+                    alert('Error playing this track. It may be a format your browser doesn\'t support.');
+                });
+                
+                this.isPlaying = true;
+                this.playBtn.textContent = '⏸';
+            }
+            
+            togglePlay() {
+                if (this.musicFiles.length === 0) return;
+                
+                if (this.audioPlayer.src === '') {
+                    this.playTrack(0);
+                    return;
+                }
+                
+                if (this.isPlaying) {
+                    this.audioPlayer.pause();
+                    this.playBtn.textContent = '▶';
+                } else {
+                    this.audioPlayer.play();
+                    this.playBtn.textContent = '⏸';
+                }
+                
+                this.isPlaying = !this.isPlaying;
+            }
+            
+            prevTrack() {
+                if (this.musicFiles.length === 0) return;
+                
+                let index = this.currentTrackIndex - 1;
+                if (index < 0) {
+                    index = this.musicFiles.length - 1;
+                }
+                
+                this.playTrack(index);
+            }
+            
+            nextTrack() {
+                if (this.musicFiles.length === 0) return;
+                
+                let index = this.currentTrackIndex + 1;
+                if (index >= this.musicFiles.length) {
+                    index = 0;
+                }
+                
+                this.playTrack(index);
+            }
+            
+            updateProgress() {
+                const { currentTime, duration } = this.audioPlayer;
+                
+                if (duration) {
+                    const progressPercent = (currentTime / duration) * 100;
+                    this.progressBar.style.width = `${progressPercent}%`;
+                }
+                
+                this.currentTimeEl.textContent = this.formatTime(currentTime);
+                this.totalTimeEl.textContent = this.formatTime(duration || 0);
+            }
+            
+            setProgress(e) {
+                const width = this.progressContainer.clientWidth;
+                const clickX = e.offsetX;
+                const duration = this.audioPlayer.duration;
+                
+                if (isNaN(duration)) return;
+                
+                this.audioPlayer.currentTime = (clickX / width) * duration;
+            }
+            
+            formatTime(seconds) {
+                const min = Math.floor(seconds / 60);
+                const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+                return `${min}:${sec}`;
+            }
+            
+            async generateRecommendations() {
+                const loader = document.createElement('div');
+                loader.classList.add('loader');
+                loader.style.display = 'block';
+                const recommendationsDiv = document.getElementById('recommendations');
+                recommendationsDiv.innerHTML = '';
+                recommendationsDiv.appendChild(loader);
+                
+                try {
+                    if (this.musicFiles.length === 0) {
+                        throw new Error('No tracks to base recommendations on');
+                    }
+                    
+                    const baseTrack = this.musicFiles[this.currentTrackIndex] || this.musicFiles[0];
+                    
+                    if (!this.lastfmApiKey || this.lastfmApiKey.trim() === '') {
+                        recommendationsDiv.innerHTML = '';
+                        
+                        const noApiKeyElement = document.createElement('div');
+                        noApiKeyElement.innerHTML = `
+                            <p style="text-align: center; color: #ff5555; padding: 10px;">Please Add an API Key</p>
+                            <p style="text-align: center; color: #aaa; padding: 5px; font-size: 0.9em;">
+                                Click "Add Last.fm API Key" below to enable recommendations
+                            </p>
+                        `;
+                        recommendationsDiv.appendChild(noApiKeyElement);
+                        
+                        this.recommendedTracks = [];
+                        this.downloadPlaylistBtn.disabled = true;
+                        return;
+                    }
+                    
+                    console.log("Using Last.fm API with key:", this.lastfmApiKey.substring(0, 3) + "...");
+                    
+                    try {
+                        let tracksFound = false;
+                        
+                        const artist = encodeURIComponent(baseTrack.artist);
+                        const track = encodeURIComponent(baseTrack.name);
+                        
+                        console.log("Searching for similar tracks to:", baseTrack.name, "by", baseTrack.artist);
+                        
+                        const apiUrl = `https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=${artist}&track=${track}&api_key=${this.lastfmApiKey}&format=json&limit=10&callback=?`;
+                        
+                        const corsProxy = 'https://corsproxy.io/?';
+                        const response = await fetch(corsProxy + encodeURIComponent(apiUrl.replace('callback=?', '')));
+                        
+                        console.log("API Response status:", response.status);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        console.log("Last.fm API response:", data);
+                        
+                        if (data.error) {
+                            throw new Error(`Last.fm API error: ${data.message || data.error}`);
+                        }
+                        
+                        if (data.similartracks && data.similartracks.track && data.similartracks.track.length > 0) {
+                            console.log("Found similar tracks:", data.similartracks.track.length);
+                            
+                            this.recommendedTracks = data.similartracks.track.map(track => ({
+                                name: track.name,
+                                artist: track.artist.name
+                            }));
+                            
+                            tracksFound = true;
+                        } else {
+                            console.log("No similar tracks found, trying similar artists");
+                            
+                            const artistApiUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&artist=${artist}&api_key=${this.lastfmApiKey}&format=json&limit=5`;
+                            
+                            const artistResponse = await fetch(corsProxy + encodeURIComponent(artistApiUrl));
+                            
+                            if (!artistResponse.ok) {
+                                throw new Error(`HTTP error when fetching similar artists: ${artistResponse.status}`);
+                            }
+                            
+                            const artistData = await artistResponse.json();
+                            console.log("Similar artists response:", artistData);
+                            
+                            if (artistData.error) {
+                                throw new Error(`Last.fm API error: ${artistData.message || artistData.error}`);
+                            }
+                            
+                            if (artistData.similarartists && 
+                                artistData.similarartists.artist && 
+                                artistData.similarartists.artist.length > 0) {
+                                
+                                this.recommendedTracks = [];
+                                
+                                for (const similarArtist of artistData.similarartists.artist.slice(0, 5)) {
+                                    const artistName = similarArtist.name;
+                                    console.log("Getting top tracks for artist:", artistName);
+                                    
+                                    const topTracksUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=${encodeURIComponent(artistName)}&api_key=${this.lastfmApiKey}&format=json&limit=2`;
+                                    
+                                    try {
+                                        const topTracksResponse = await fetch(corsProxy + encodeURIComponent(topTracksUrl));
+                                        
+                                        if (!topTracksResponse.ok) {
+                                            console.error(`HTTP error when fetching top tracks: ${topTracksResponse.status}`);
+                                            continue;
+                                        }
+                                        
+                                        const topTracksData = await topTracksResponse.json();
+                                        
+                                        if (topTracksData.error) {
+                                            console.error(`Last.fm API error: ${topTracksData.message || topTracksData.error}`);
+                                            continue;
+                                        }
+                                        
+                                        console.log("Top tracks for", artistName, ":", topTracksData);
+                                        
+                                        if (topTracksData.toptracks && 
+                                            topTracksData.toptracks.track && 
+                                            topTracksData.toptracks.track.length > 0) {
+                                            
+                                            for (const topTrack of topTracksData.toptracks.track) {
+                                                this.recommendedTracks.push({
+                                                    name: topTrack.name,
+                                                    artist: artistName
+                                                });
+                                                
+                                                if (this.recommendedTracks.length >= 10) break;
+                                            }
+                                        }
+                                    } catch (e) {
+                                        console.error('Error fetching top tracks:', e);
+                                    }
+                                    
+                                    if (this.recommendedTracks.length >= 10) break;
+                                }
+                                
+                                if (this.recommendedTracks.length > 0) {
+                                    tracksFound = true;
+                                }
+                            }
+                        }
+                        
+                        if (tracksFound) {
+                            this.usingLastFmData = true;
+                            console.log("Using Last.fm data for recommendations");
+                            this.renderRecommendations();
+                        } else {
+                            recommendationsDiv.innerHTML = '';
+                            
+                            const noTracksElement = document.createElement('div');
+                            noTracksElement.innerHTML = `
+                                <p style="text-align: center; color: #ff5555; padding: 10px;">No similar tracks found</p>
+                                <p style="text-align: center; color: #aaa; padding: 5px; font-size: 0.9em;">
+                                    Last.fm couldn't find any recommendations for this song
+                                </p>
+                            `;
+                            recommendationsDiv.appendChild(noTracksElement);
+                            
+                            this.recommendedTracks = [];
+                            this.downloadPlaylistBtn.disabled = true;
+                        }
+                    } catch (apiError) {
+                        console.error('Last.fm API error:', apiError);
+                        
+                        recommendationsDiv.innerHTML = '';
+                        
+                        const errorElement = document.createElement('div');
+                        errorElement.innerHTML = `
+                            <p style="text-align: center; color: #ff5555; padding: 10px;">API Error:</p>
+                            <p style="text-align: center; color: #ff8888; padding: 5px; font-size: 0.9em;">
+                                ${apiError.message}
+                            </p>
+                            <p style="text-align: center; color: #aaa; padding: 5px; font-size: 0.8em;">
+                                Check your API key or try again later
+                            </p>
+                        `;
+                        recommendationsDiv.appendChild(errorElement);
+                        
+                        this.recommendedTracks = [];
+                        this.downloadPlaylistBtn.disabled = true;
+                    }
+                } catch (error) {
+                    console.error('Error generating recommendations:', error);
+                    
+                    const recommendationsDiv = document.getElementById('recommendations');
+                    recommendationsDiv.innerHTML = '';
+                    
+                    const errorElement = document.createElement('div');
+                    errorElement.innerHTML = `
+                        <p style="text-align: center; color: #ff5555; padding: 10px;">Error:</p>
+                        <p style="text-align: center; color: #ff8888; padding: 5px; font-size: 0.9em;">
+                            ${error.message}
+                        </p>
+                    `;
+                    recommendationsDiv.appendChild(errorElement);
+                    
+                    this.recommendedTracks = [];
+                    this.downloadPlaylistBtn.disabled = true;
+                }
+            }
+            
+            downloadPlaylist() {
+                if (this.recommendedTracks.length === 0) return;
+                
+                let content = "# NibTunez Recommended Playlist\n\n";
+                
+                content += "Generated on: " + new Date().toLocaleString() + "\n";
+                content += "Based on: " + this.musicFiles[this.currentTrackIndex].name + " by " + this.musicFiles[this.currentTrackIndex].artist + "\n";
+                
+                if (this.usingLastFmData) {
+                    content += "Source: Last.fm API\n";
+                } else {
+                    content += "Source: NibTunez recommendation engine\n";
+                }
+                
+                content += "\n## Tracks\n\n";
+                
+                this.recommendedTracks.forEach((track, index) => {
+                    content += `${index + 1}. ${track.name} - ${track.artist}\n`;
+                });
+                
+                const element = document.createElement('a');
+                const file = new Blob([content], {type: 'text/plain'});
+                element.href = URL.createObjectURL(file);
+                element.download = 'nibtunez_playlist.txt';
+                
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }
+            
+            setupEventListeners() {
+                this.playBtn.addEventListener('click', () => this.togglePlay());
+                
+                this.prevBtn.addEventListener('click', () => this.prevTrack());
+                this.nextBtn.addEventListener('click', () => this.nextTrack());
+                
+                this.audioPlayer.addEventListener('timeupdate', () => this.updateProgress());
+                this.progressContainer.addEventListener('click', (e) => this.setProgress(e));
+                
+                this.audioPlayer.addEventListener('ended', () => this.nextTrack());
+                
+                this.volumeSlider.addEventListener('input', () => {
+                    this.audioPlayer.volume = this.volumeSlider.value;
+                });
+                
+                this.generatePlaylistBtn.addEventListener('click', () => this.generateRecommendations());
+                
+                this.downloadPlaylistBtn.addEventListener('click', () => this.downloadPlaylist());
+                
+                this.selectFilesBtn.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+                
+                this.fileInput.addEventListener('change', (event) => {
+                    const files = event.target.files;
+                    if (files.length > 0) {
+                        this.loadMusicFiles(files);
+                    }
+                });
+                
+                this.apiKeyButton.addEventListener('click', () => {
+                    this.apiKeyInput.style.display = 'block';
+                    this.apiKeyField.value = this.lastfmApiKey;
+                    this.apiKeyField.focus();
+                });
+                
+                this.saveApiKeyBtn.addEventListener('click', () => {
+                    const key = this.apiKeyField.value.trim();
+                    this.saveApiKey(key);
+                    this.apiKeyInput.style.display = 'none';
+                });
+                
+                this.cancelApiKeyBtn.addEventListener('click', () => {
+                    this.apiKeyInput.style.display = 'none';
+                });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.musicPlayer = new MusicPlayer();
+            console.log("NibTunez initialized successfully!");
+        });
+    </script>
+</body>
+</html>
